@@ -88,15 +88,15 @@ if vim.eval('a:0') != '1':
     syntax = syntax_mapping.get(vim.eval('&ft'), '')
     paste_data = dict(language=syntax, content=code)
 
-    #paste_url = new_paste(**paste_data)
+    paste_url = new_paste(**paste_data)
 
-    #if paste_url:
-    #    print "Pasted content to %s" % (paste_url)
+    if paste_url:
+        print "Pasted content to %s" % (paste_url)
 
-    #    vim.command('setlocal nomodified')
-    #    vim.command('let b:dpaste_url="%s"' % paste_url)
-    #else:
-    #    print "Could not connect to dpaste.com."
+        vim.command('setlocal nomodified')
+        vim.command('let b:dpaste_url="%s"' % paste_url)
+    else:
+        print "Could not connect to dpaste.com."
 
 
 endpython
