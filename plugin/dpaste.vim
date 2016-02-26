@@ -29,6 +29,7 @@ def get_syntax_mapping():
     """
     Gets a dictionary of syntax mappings from dpaste.com
     """
+    print 'Loading Dpaste syntax mappings'
     try: 
         fd = urllib2.urlopen(BASE_URL + 'syntax-choices/')
     except urllib2.URLError:
@@ -49,6 +50,7 @@ def new_paste(**paste_data):
     """
     The function that does all the magic work
     """
+    print 'Creating paste'
 
     data = urllib.urlencode(paste_data)
 
@@ -56,9 +58,10 @@ def new_paste(**paste_data):
         req = urllib2.Request(BASE_URL)
         fd = urllib2.urlopen(req, data)
     except urllib2.URLError:
+        print 'Failed to send request to dpaste.com'
         return False
 
-    return fd.geturl()
+    return fd.getcode(), fd.read()
 
 def make_utf8(code):
     enc = vim.eval('&fenc') or vim.eval('&enc')
@@ -88,15 +91,15 @@ if vim.eval('a:0') != '1':
     syntax = syntax_mapping.get(vim.eval('&ft'), '')
     paste_data = dict(language=syntax, content=code)
 
-    paste_url = new_paste(**paste_data)
+    rcode, paste_url = new_paste(**paste_data)
 
-    if paste_url:
+    if rcode != 201:
+        print "Failed paste to Dpaste [%s]" % (rcode)
+    else:
         print "Pasted content to %s" % (paste_url)
 
         vim.command('setlocal nomodified')
         vim.command('let b:dpaste_url="%s"' % paste_url)
-    else:
-        print "Could not connect to dpaste.com."
 
 
 endpython
